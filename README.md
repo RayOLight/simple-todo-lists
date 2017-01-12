@@ -9,6 +9,7 @@ Demo account:
 + password: example
 
 Available via https://foo-todo-list.herokuapp.com/
+(!) Each drag event can be operated with a delay, because the database is running in sandbox mode.
 ![image](https://pp.vk.me/c837426/v837426935/1adb6/_I_dRMPK1ro.jpg)
 
 Dragged by
