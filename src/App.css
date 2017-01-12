@@ -1,0 +1,45 @@
+p#head::first-line {
+    font-size: 2em;
+}
+
+#head {
+    text-align: center;
+    margin: 3%;
+    padding-top: 2em;
+    font-family: 'Lato', sans-serif;
+}
+
+.centered-row {
+    width: 15%;
+    margin: auto;
+}
+
+#or {
+    margin: 0.5em 0;
+    position: relative;
+    left: 2.5em;
+}
+
+#signfoo {
+    text-align: center;
+    font-size: 2em;
+}
+
+#intro {
+    float: right;
+    font-size: 0.8em;
+    color: #999999;
+}
+
+#remove:hover {
+    color: rgb(29, 25, 25);
+    cursor: pointer;
+}
+
+#laptop {
+    height: 20em;
+    width: 40em;
+    position: relative;
+    right: 18em;
+    margin: 2em;
+}

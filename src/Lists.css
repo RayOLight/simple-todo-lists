@@ -1,0 +1,155 @@
+.panel {
+    border-radius: 0 0 15px 15px;
+}
+
+div.panel-heading {
+    font-size: 16px;
+    background-color: #4172ae;
+    color: white;
+}
+
+.panel-heading {
+    border-radius: 0;
+}
+
+.panel-default > .panel-heading {
+    color: white;
+    background: linear-gradient(#487dcc, #3b5fa2);
+    border-color: rgb(73, 117, 196);
+}
+
+#calendar {
+    width: 1.5em;
+    height: 1.5em;
+    margin: 0 1em 0.6em 0;
+    display: inline-block;
+}
+
+#projtitle {
+    display: inline;
+    color: white;
+    padding: 0px;
+    margin: 0px;
+}
+
+#upd {
+    display: inline-flex;
+    max-width: 30em;
+    margin-top: 0.5em;
+    padding: 0px;
+    margin: 0px;
+}
+
+.btn-default {
+    background: linear-gradient(#487dcc, #3b5fa2);
+    color: white;
+}
+
+#projevent {
+    display: inline-block;
+    float: right;
+    margin-top: 0.5em;
+}
+
+#delete-project {
+    width: 1.5em;
+    height: 1.5em;
+    float: right;
+    cursor: pointer;
+}
+
+#icon {
+    width: 1.5em;
+    height: 1.5em;
+    float: right;
+}
+
+#edit-project {
+    width: 1.5em;
+    height: 1.5em;
+    float: right;
+    cursor: pointer;
+}
+
+#add-task {
+    padding: 5px;
+    background-color: rgb(215, 215, 215);
+}
+
+li.panel-body:hover {
+    background-color: rgb(252, 254, 213);
+}
+
+li.panel-body {
+    border-top: 1px solid black;
+    border-left: 1px solid black;
+    border-right: 1px solid black;
+}
+
+.panel-body {
+    padding: 13px;
+}
+
+li.panel-body:last-of-type {
+    padding: 15px;
+    border: 1px solid black;
+    border-radius: 0 0 15px 15px;
+}
+
+.btn-secondary {
+    color: white;
+    background: linear-gradient(#8fc6a8, #52896a);
+}
+
+#tasks {
+    color: rgb(153, 153, 153);
+    font-size: 13px;
+    margin: 0;
+    padding: 0;
+}
+
+#mark {
+    height: 1.3em;
+    width: 1.3em;
+    margin: 0px 10px 0px 0px;
+}
+
+#taskline {
+    font-size: 15px;
+    display: inline-block;
+    max-width: 52em;
+    margin: 0px;
+    padding: 0px;
+}
+
+.btn-default {
+    background: linear-gradient(#487dcc, #3b5fa2);
+    color: white;
+}
+
+#choose {
+    display: inline-block;
+    float: right;
+}
+
+#icon {
+    width: 1.5em;
+    height: 1.5em;
+    float: right;
+}
+
+li,
+ul {
+    list-style-position: inside;
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    width: auto;
+}
+
+#menu {
+    position: fixed;
+}
