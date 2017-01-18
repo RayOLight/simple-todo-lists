@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 var shortid = require('shortid');
 var MongoClient = require('mongodb').MongoClient;
+var EventEmitter = require("events").EventEmitter;
 var url = 'mongodb://windsurf:windsurf@ds011382.mlab.com:11382/heroku_g0qgkz31';
 
 router.get('/', (req, res, next) => {
@@ -173,66 +174,80 @@ router.patch('/api/user/:uid/project/:pid/task/:tid', (req, res) => {
     });
 });
 
-
-router.patch('/api/user/:uid/project/:pid/:index', (req, res) => {
+router.patch('/api/user/:uid/project/:pid/:index', (req, res) => { // D&D handler for projects
     MongoClient.connect(url, (err, db) => {
         var collection = db.collection('projects');
         var elem = {};
         var arr = [];
-        collection.find({user_id: req.params.uid})
-            .toArray((err, docs) => {
-            arr = docs;
-            arr.forEach((el, i) => {
-                if (el.id === req.params.pid){
-                    elem = arr[i];
-                    arr.splice(i, 1);
-                }
-            });
-            console.log(arr);
-            arr.splice(req.params.index, 0, elem);
-            console.log(arr);
-                collection.deleteMany({
-                    user_id: req.params.uid,
-                }, (errmsg, result) => {
-                    collection.insertMany(arr, (errm, reslt) => {
-                        console.log(errm);
-                        console.log(reslt.insertedCount);
-                        db.close();
-                        res.end();
-                    });
+        var ee = new EventEmitter();
+        ee.on('delete&insert', (arr) => {
+            collection.deleteMany({
+                user_id: req.params.uid,
+            }, (errmsg, result) => {
+                collection.insertMany(arr, (errm, reslt) => {
+                    console.log(errm);
+                    console.log(reslt.insertedCount);
+                    db.close();
+                    res.end();
                 });
-
             });
+        });
+        ee.on('find', () => {
+            collection.find({user_id: req.params.uid})
+            .toArray((err, docs) => {
+                arr = docs;
+                arr.forEach((el, i) => {                 // finds project`s id
+                    if (el.id === req.params.pid) {       // and
+                        elem = arr[i];                   // ...
+                        arr.splice(i, 1);                // remove that from arr
+                    }
+                });                                      // then put removed project to the arr again
+                arr.splice(req.params.index, 0, elem);   // but on the specified position
+                ee.emit('delete&insert', arr);
+            });
+        });
+        ee.emit('find');  
     });
 });
 
-router.patch('/api/user/:uid/project/:pid/task/:tid/:index', (req, res) => {
-    MongoClient.connect(url, (err, db) => {
+router.patch('/api/user/:uid/project/:pid/task/:tid/:index', (req, res) => {     // do the same as previous endpoint handler
+    MongoClient.connect(url, (err, db) => {                                      // but it manipulate with task`s data
         var collection = db.collection('projects');
         var index = 0;
-        collection.find({user_id: req.params.uid, id: req.params.pid, "tasks.id": req.params.tid})
-            .toArray((err, docs) => {
-                collection.update({user_id: req.params.uid, id: req.params.pid}, 
-                                 { $pull: { tasks: { $elemMatch: { id: req.params.tid } } } },
-                                 (errmsg, result) => {
-                    docs[0].tasks.forEach((el, i, arr) => {
-                        if (el.id === req.params.tid) index = i;
-                    });
-                    collection.update({user_id: req.params.uid, id: req.params.pid},
-                                      { $push: { tasks: { $each: [ docs[0].tasks[index] ],
-                                                        $position: parseInt(req.params.index) } } },
-                                      (errmg, reslt) => {
-                        console.log(errmg);
-                        console.log(reslt.matchedCount);
-                        db.close();
-                        res.end();
-                    });
-                });
+        var ee = new EventEmitter();
+        ee.on('putInNewPosition', (docs) => {
+            collection.update({ user_id: req.params.uid, id: req.params.pid },
+                              { $push: { tasks: { $each: [ docs[0].tasks[index] ],
+                                $position: parseInt(req.params.index) } } },
+                              (errmg, reslt) => {
+                console.log(errmg);
+                console.log(reslt.matchedCount);
+                db.close();
+                res.end();
             });
+        });
+        ee.on('removeTask', (docs) => {
+            collection.update({ user_id: req.params.uid, id: req.params.pid }, 
+                              { $pull: { tasks: { $elemMatch: { id: req.params.tid } } } },
+                              (errmsg, result) => {
+                docs[0].tasks.forEach((el, i, arr) => {
+                    if (el.id === req.params.tid) index = i;
+                });
+                ee.emit('putInNewPosition', docs);
+            });
+        });
+        ee.on('find', () => {
+            collection.find({user_id: req.params.uid, id: req.params.pid, 
+                            "tasks.id": req.params.tid})
+            .toArray((err, docs) => {
+                ee.emit('removeTask', docs);
+            });
+        });
+        ee.emit('find');
     });
 });
 
-router.patch('/api/user/:uid/project/:pid/task/:tid/:status', (req, res) => {
+router.patch('/api/user/:uid/project/:pid/task/:tid/status/:status', (req, res) => {
     MongoClient.connect(url, (err, db) => {
         var collection = db.collection('projects');
         collection.update({
